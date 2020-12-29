@@ -24,7 +24,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/entrypoint.sh"]
-          args: ["--api={{ .Values.pdns.api.enabled }}", "--api-key={{ .Values.pdns.api.key }}", "--webserver=yes", "--webserver-port=8081", "--webserver-address=0.0.0.0", "--webserver-allow-from={{ .Values.pdns.webserver.allowFrom }}", "--slave=yes", "--dnsupdate={{ .Values.pdns.dnsupdate.enabled }}", "--default-soa-name={{ .Values.pdns.soa.defaultName }}", "--allow-axfr-ips={{ .Values.pdns.axfr.allowIP }}","--allow-notify-from={{ .Values.pdns.axfr.allowNotify }}" ]
+          args: ["--api={{ .Values.pdns.api.enabled }}", "--api-key=$(POWERDNS_API_KEY)", "--webserver=yes", "--webserver-port=8081", "--webserver-address=0.0.0.0", "--webserver-allow-from={{ .Values.pdns.webserver.allowFrom }}", "--slave=yes", "--dnsupdate={{ .Values.pdns.dnsupdate.enabled }}", "--default-soa-name={{ .Values.pdns.soa.defaultName }}", "--allow-axfr-ips={{ .Values.pdns.axfr.allowIP }}","--allow-notify-from={{ .Values.pdns.axfr.allowNotify }}" ]
           env:
               - name: MYSQL_HOST
               {{- if or (empty .Values.mariadb.serviceDiscovery) (eq .Values.mariadb.serviceDiscovery "dns") }}
