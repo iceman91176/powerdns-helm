@@ -10,6 +10,11 @@ pdns:
         allowFrom: 0.0.0.0/0
     dnsupdate:
         enabled: no
+    axfr:
+        allowIP: "127.0.0.0/8,::1"
+        allowNotify: "0.0.0.0/0,::/0"        
+    soa:
+        defaultName: "a.misconfigured.powerdns.server"
 
 replicaCount: 1
 
