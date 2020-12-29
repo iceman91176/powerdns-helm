@@ -27,7 +27,11 @@ spec:
           args: ["--api={{ .Values.pdns.api.enabled }}", "--api-key={{ .Values.pdns.api.key }}", "--webserver=yes", "--webserver-port=8081", "--webserver-address=0.0.0.0", "--webserver-allow-from={{ .Values.pdns.webserver.allowFrom }}", "--slave=yes", "--dnsupdate={{ .Values.pdns.dnsupdate.enabled }}", "--default-soa-name={{ .Values.pdns.soa.defaultName }}", "--allow-axfr-ips={{ .Values.pdns.axfr.allowIP }}","--allow-notify-from={{ .Values.pdns.axfr.allowNotify }}" ]
           env:
               - name: MYSQL_HOST
+              {{- if or (empty .Values.mariadb.serviceDiscovery) (eq .Values.mariadb.serviceDiscovery "dns") }}
                 value: {{ template "mariadb.fullname" . }}
+              {{- else if eq .Values.mariadb.serviceDiscovery "env" }}
+                value: {{ (include "mariadb.fullname" .) | replace "-" "_" | upper | printf "$(%s_SERVICE_HOST)" }}
+              {{- end }}
               - name: MYSQL_USER
                 value: "root"
                 value: {{ .Values.mariadb.mariadbUser | quote }}
@@ -35,6 +39,11 @@ spec:
                 value: {{ .Values.mariadb.mariadbPassword | quote }}
               - name: MYSQL_DB
                 value: {{ .Values.mariadb.mariadbDatabase | quote }}
+              - name: POWERDNS_API_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: powerdns-api-key
+                    key: POWERDNS_API_KEY
           ports:
             - name: dns-udp
               containerPort: 53
